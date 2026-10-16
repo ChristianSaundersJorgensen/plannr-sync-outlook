@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Plannr Sync for Outlook: a button on a read email that opens Plannr Sync (the
+  owner's PC app at http://127.0.0.1:8773) on the sender's client, ready to chase
+  documents. The add-in reads only the sender's address and holds no data.
+-->
+<OfficeApp xmlns="http://schemas.microsoft.com/office/appforoffice/1.1"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xmlns:bt="http://schemas.microsoft.com/office/officeappbasictypes/1.0"
+           xmlns:mailappor="http://schemas.microsoft.com/office/mailappversionoverrides/1.0"
+           xsi:type="MailApp">
+  <Id>2f05161b-bde5-4c19-bf7d-f995c6b763b0</Id>
+  <Version>1.0.0.0</Version>
+  <ProviderName>CSJ</ProviderName>
+  <DefaultLocale>en-GB</DefaultLocale>
+  <DisplayName DefaultValue="Plannr Sync"/>
+  <Description DefaultValue="Open Plannr Sync on this email's client to chase documents."/>
+  <IconUrl DefaultValue="https://christiansaundersjorgensen.github.io/plannr-sync-outlook/assets/icon-64.png"/>
+  <HighResolutionIconUrl DefaultValue="https://christiansaundersjorgensen.github.io/plannr-sync-outlook/assets/icon-128.png"/>
+  <SupportUrl DefaultValue="https://christiansaundersjorgensen.github.io/plannr-sync-outlook/"/>
+  <Hosts>
+    <Host Name="Mailbox"/>
+  </Hosts>
+  <Requirements>
+    <Sets>
+      <Set Name="Mailbox" MinVersion="1.1"/>
+    </Sets>
+  </Requirements>
+  <FormSettings>
+    <Form xsi:type="ItemRead">
+      <DesktopSettings>
+        <SourceLocation DefaultValue="https://christiansaundersjorgensen.github.io/plannr-sync-outlook/taskpane.html"/>
+        <RequestedHeight>250</RequestedHeight>
+      </DesktopSettings>
+    </Form>
+  </FormSettings>
+  <Permissions>ReadItem</Permissions>
+  <Rule xsi:type="RuleCollection" Mode="Or">
+    <Rule xsi:type="ItemIs" ItemType="Message" FormType="Read"/>
+  </Rule>
+  <DisableEntityHighlighting>true</DisableEntityHighlighting>
+
+  <VersionOverrides xmlns="http://schemas.microsoft.com/office/mailappversionoverrides" xsi:type="VersionOverridesV1_0">
+    <Hosts>
+      <Host xsi:type="MailHost">
+        <DesktopFormFactor>
+          <ExtensionPoint xsi:type="MessageReadCommandSurface">
+            <OfficeTab id="TabDefault">
+              <Group id="plannrSyncGroup">
+                <Label resid="groupLabel"/>
+                <Control xsi:type="Button" id="chaseButton">
+                  <Label resid="buttonLabel"/>
+                  <Supertip>
+                    <Title resid="buttonLabel"/>
+                    <Description resid="buttonTip"/>
+                  </Supertip>
+                  <Icon>
+                    <bt:Image size="16" resid="icon16"/>
+                    <bt:Image size="32" resid="icon32"/>
+                    <bt:Image size="80" resid="icon80"/>
+                  </Icon>
+                  <Action xsi:type="ShowTaskpane">
+                    <SourceLocation resid="taskpaneUrl"/>
+                  </Action>
+                </Control>
+              </Group>
+            </OfficeTab>
+          </ExtensionPoint>
+        </DesktopFormFactor>
+      </Host>
+    </Hosts>
+    <Resources>
+      <bt:Images>
+        <bt:Image id="icon16" DefaultValue="https://christiansaundersjorgensen.github.io/plannr-sync-outlook/assets/icon-16.png"/>
+        <bt:Image id="icon32" DefaultValue="https://christiansaundersjorgensen.github.io/plannr-sync-outlook/assets/icon-32.png"/>
+        <bt:Image id="icon80" DefaultValue="https://christiansaundersjorgensen.github.io/plannr-sync-outlook/assets/icon-80.png"/>
+      </bt:Images>
+      <bt:Urls>
+        <bt:Url id="taskpaneUrl" DefaultValue="https://christiansaundersjorgensen.github.io/plannr-sync-outlook/taskpane.html"/>
+      </bt:Urls>
+      <bt:ShortStrings>
+        <bt:String id="groupLabel" DefaultValue="Plannr Sync"/>
+        <bt:String id="buttonLabel" DefaultValue="Chase in Plannr"/>
+      </bt:ShortStrings>
+      <bt:LongStrings>
+        <bt:String id="buttonTip" DefaultValue="Open Plannr Sync on this email's client, ready to chase documents. Nothing changes in Plannr until you push."/>
+      </bt:LongStrings>
+    </Resources>
+  </VersionOverrides>
+</OfficeApp>

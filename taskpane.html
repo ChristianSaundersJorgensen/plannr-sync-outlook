@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Plannr Sync</title>
+  <!-- Office.js must come from Microsoft's CDN. -->
+  <script src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js"></script>
+  <style>
+    body { font-family: "Segoe UI", system-ui, sans-serif; margin: 16px; color: #1A1A2E; }
+    h1 { font-size: 16px; color: #1F5F4A; margin: 0 0 8px; }
+    p { font-size: 13px; line-height: 1.45; color: #4A5568; margin: 6px 0; }
+    .who { font-size: 14px; color: #1A1A2E; font-weight: 600; word-break: break-all; }
+    a.button {
+      display: inline-block; margin-top: 12px; padding: 9px 14px; border-radius: 4px;
+      background: #1F5F4A; color: #fff; font-weight: 600; font-size: 14px; text-decoration: none;
+    }
+    a.button[aria-disabled="true"] { opacity: 0.4; pointer-events: none; }
+  </style>
+</head>
+<body>
+  <h1>Chase documents</h1>
+  <p>Client email:</p>
+  <p class="who" id="who">Reading the email…</p>
+  <a class="button" id="open" href="#" target="_blank" rel="noopener" aria-disabled="true">Open in Plannr Sync</a>
+  <p id="note">Opens Plannr Sync on this PC. Nothing changes in Plannr until you review and push there.</p>
+
+  <script>
+    // The PC app's address. It must match the port Plannr Sync is installed on.
+    var APP = 'http://127.0.0.1:8773';
+
+    Office.onReady(function () {
+      var mailbox = Office.context.mailbox;
+      var item = mailbox.item;
+      var me = (mailbox.userProfile.emailAddress || '').toLowerCase();
+      var from = item.from && item.from.emailAddress ? item.from.emailAddress : '';
+      // An email you sent (e.g. in Sent Items): chase its first recipient instead.
+      if (from.toLowerCase() === me && item.to && item.to.length > 0) from = item.to[0].emailAddress;
+
+      var who = document.getElementById('who');
+      var link = document.getElementById('open');
+      if (!from) {
+        who.textContent = 'No sender address on this email.';
+        return;
+      }
+      var url = APP + '/chase?email=' + encodeURIComponent(from);
+      who.textContent = from;
+      link.href = url;
+      link.setAttribute('aria-disabled', 'false');
+      link.addEventListener('click', function (event) {
+        // Outlook may block plain new windows; its own API opens the default browser.
+        if (Office.context.requirements.isSetSupported('OpenBrowserWindowApi', '1.1')) {
+          event.preventDefault();
+          Office.context.ui.openBrowserWindow(url);
+        }
+      });
+    });
+  </script>
+</body>
+</html>
