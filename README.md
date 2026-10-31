@@ -23,4 +23,11 @@ Add a custom add-in → Add from URL →
 Edit, commit and push; Pages republishes in a minute. A change to `manifest.xml`
 (buttons, icons, URLs) also needs `<Version>` bumped and the add-in removed and
 added again in Outlook. If Plannr Sync's port ever changes, change `APP` in
-`taskpane.html`.
+`chase.js`.
+
+## Tests
+
+`node --test tests/` (Node 22 or later, no packages needed). The tests check
+which address gets chased, that the link is built safely, and that the
+manifest and pages haven't drifted into riskier settings (wider mailbox
+permissions, scripts from new places, non-https URLs).

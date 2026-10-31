@@ -25,25 +25,24 @@
   <a class="button" id="open" href="#" target="_blank" rel="noopener" aria-disabled="true">Open in Plannr Sync</a>
   <p id="note">Opens Plannr Sync on this PC. Nothing changes in Plannr until you review and push there.</p>
 
+  <!-- Address logic lives in chase.js so it can be tested; the port is set there. -->
+  <script src="chase.js"></script>
   <script>
-    // The PC app's address. It must match the port Plannr Sync is installed on.
-    var APP = 'http://127.0.0.1:8773';
-
     Office.onReady(function () {
       var mailbox = Office.context.mailbox;
       var item = mailbox.item;
-      var me = (mailbox.userProfile.emailAddress || '').toLowerCase();
-      var from = item.from && item.from.emailAddress ? item.from.emailAddress : '';
-      // An email you sent (e.g. in Sent Items): chase its first recipient instead.
-      if (from.toLowerCase() === me && item.to && item.to.length > 0) from = item.to[0].emailAddress;
+      var me = mailbox.userProfile.emailAddress || '';
+      var sender = item.from && item.from.emailAddress ? item.from.emailAddress : '';
+      var to = (item.to || []).map(function (r) { return r && r.emailAddress; });
+      var from = PlannrChase.pickChaseAddress(sender, me, to);
 
       var who = document.getElementById('who');
       var link = document.getElementById('open');
       if (!from) {
-        who.textContent = 'No sender address on this email.';
+        who.textContent = 'No client address on this email.';
         return;
       }
-      var url = APP + '/chase?email=' + encodeURIComponent(from);
+      var url = PlannrChase.buildChaseUrl(from);
       who.textContent = from;
       link.href = url;
       link.setAttribute('aria-disabled', 'false');
